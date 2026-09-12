@@ -8,6 +8,7 @@ import { SiteAdapter } from './adapters/adapter.interface';
 import { loadDefaultProfile } from '../qualification/engine';
 import { loadAnswerBank } from '../llm/ollama';
 import { emitLifecycleEvent } from '../sync/outbox';
+import { ensureIndeedLogin } from './browser/indeed-auth';
 
 export type ApplicationState =
   | 'NEW'
@@ -40,6 +41,7 @@ export interface WorkflowExecutionResult {
 export class ApplicationWorkflowEngine {
   private browserManager: BrowserManager;
   private adapters: SiteAdapter[];
+  private isAuthenticated = false;
 
   constructor(browserManager?: BrowserManager) {
     this.browserManager = browserManager || new BrowserManager();
@@ -144,6 +146,14 @@ export class ApplicationWorkflowEngine {
     let screenshotPath: string | undefined;
 
     try {
+      // Ensure Indeed login session is active if credentials are configured
+      if (!this.isAuthenticated && process.env.INDEED_EMAIL) {
+        const context = await this.browserManager.launch();
+        const loginResult = await ensureIndeedLogin(context);
+        console.log(`[Workflow] Indeed login status: ${loginResult.method} (loggedIn: ${loginResult.loggedIn})`);
+        this.isAuthenticated = true;
+      }
+
       page = await this.browserManager.newPage();
 
       // State: OPEN_APPLICATION

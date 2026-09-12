@@ -1,0 +1,76 @@
+/* Job Application Tracker — Content Script Styles (injected on Indeed) */
+
+#jat-fit-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  flex-wrap: wrap;
+}
+
+#jat-fit-badge .jat-score {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+#jat-fit-badge .jat-label {
+  font-size: 11px;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+#jat-fit-badge .jat-excluded {
+  background: #dc3545;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#jat-fit-badge .jat-skills {
+  font-size: 11px;
+  color: #495057;
+  flex: 1;
+  min-width: 100px;
+}
+
+#jat-queue-btn {
+  padding: 6px 14px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+#jat-queue-btn:hover:not(:disabled) {
+  background: #1e7e34;
+}
+
+#jat-queue-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+#jat-queue-btn.jat-queued {
+  background: #6c757d;
+}
+
+.jat-mini-badge {
+  vertical-align: middle;
+}

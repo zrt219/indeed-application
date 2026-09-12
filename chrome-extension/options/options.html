@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Application Tracker — Settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #1a1a2e;
+      padding: 40px;
+    }
+    .container {
+      max-width: 520px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #6c757d;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #495057;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    input[type="text"], input[type="password"], input[type="url"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      transition: border-color 0.15s ease;
+    }
+    input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+    }
+    .help-text {
+      font-size: 11px;
+      color: #adb5bd;
+      margin-top: 4px;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 24px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-primary:hover { background: #0056b3; }
+    .btn-secondary { background: #e9ecef; color: #495057; }
+    .btn-secondary:hover { background: #dee2e6; }
+    .status-msg {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: none;
+    }
+    .status-msg.success { display: block; background: #d4edda; color: #155724; }
+    .status-msg.error { display: block; background: #f8d7da; color: #721c24; }
+    .status-msg.info { display: block; background: #cce5ff; color: #004085; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ Job Application Tracker Settings</h1>
+    <p class="subtitle">Configure your API connections and authentication.</p>
+
+    <div class="form-group">
+      <label for="local-url">Local API URL</label>
+      <input type="url" id="local-url" placeholder="http://localhost:3000">
+      <p class="help-text">Your local Next.js dev server (for one-click apply)</p>
+    </div>
+
+    <div class="form-group">
+      <label for="cloud-url">Cloud API URL</label>
+      <input type="url" id="cloud-url" placeholder="https://job-application-agent-kohl.vercel.app">
+      <p class="help-text">Your Vercel deployment URL</p>
+    </div>
+
+    <div class="form-group">
+      <label for="api-key">API Key</label>
+      <input type="password" id="api-key" placeholder="Enter your API key">
+      <p class="help-text">Bearer token for authenticating with the API. Set API_KEY in your .env</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-save">Save Settings</button>
+      <button class="btn btn-secondary" id="btn-test">Test Connection</button>
+    </div>
+
+    <div class="status-msg" id="status-msg"></div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

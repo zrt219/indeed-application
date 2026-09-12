@@ -12,22 +12,46 @@ export class BrowserManager {
   private browser: Browser | null = null;
   private context: BrowserContext | null = null;
   private isHeadless: boolean;
+  private userDataDir?: string;
+  private slowMo?: number;
 
   constructor(options?: BrowserManagerOptions) {
     this.isHeadless = options?.headless ?? (process.env.HEADLESS !== 'false');
+    this.slowMo = options?.slowMo;
+    this.userDataDir = options?.userDataDir || (process.env.INDEED_EMAIL ? path.resolve(process.cwd(), 'data', 'browser-profile') : undefined);
   }
 
   async launch(): Promise<BrowserContext> {
     if (this.context) return this.context;
 
+    const commonArgs = [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-blink-features=AutomationControlled',
+    ];
+
+    if (this.userDataDir) {
+      if (!fs.existsSync(this.userDataDir)) {
+        fs.mkdirSync(this.userDataDir, { recursive: true });
+      }
+      this.context = await chromium.launchPersistentContext(this.userDataDir, {
+        headless: this.isHeadless,
+        slowMo: this.slowMo,
+        args: commonArgs,
+        viewport: { width: 1280, height: 800 },
+        userAgent:
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        locale: 'en-US',
+        timezoneId: 'America/Chicago',
+      });
+      return this.context;
+    }
+
     this.browser = await chromium.launch({
       headless: this.isHeadless,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-blink-features=AutomationControlled',
-      ],
+      slowMo: this.slowMo,
+      args: commonArgs,
     });
 
     this.context = await this.browser.newContext({

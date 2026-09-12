@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Application Tracker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>📋 Job Tracker</h1>
+      <span id="connection-status" class="status-badge">⏳</span>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card submitted">
+        <span class="stat-number" id="stat-submitted">-</span>
+        <span class="stat-label">Submitted</span>
+      </div>
+      <div class="stat-card queued">
+        <span class="stat-number" id="stat-queued">-</span>
+        <span class="stat-label">Queued</span>
+      </div>
+      <div class="stat-card action">
+        <span class="stat-number" id="stat-action">-</span>
+        <span class="stat-label">Action Needed</span>
+      </div>
+      <div class="stat-card total">
+        <span class="stat-number" id="stat-total">-</span>
+        <span class="stat-label">Total Jobs</span>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <h2>Quick Actions</h2>
+      <button id="btn-apply-current" class="btn btn-primary" disabled>
+        🚀 Apply to Current Job
+      </button>
+      <button id="btn-queue-current" class="btn btn-secondary" disabled>
+        ➕ Queue Current Job
+      </button>
+      <button id="btn-refresh" class="btn btn-ghost">
+        🔄 Refresh Stats
+      </button>
+    </div>
+
+    <!-- Ledger Feed -->
+    <div class="ledger-section">
+      <h2>Recent Activity</h2>
+      <div id="ledger-feed" class="ledger-feed">
+        <p class="loading-text">Loading events...</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="popup-footer">
+      <a href="#" id="btn-dashboard">Open Dashboard</a>
+      <span>·</span>
+      <a href="#" id="btn-settings">Settings</a>
+    </footer>
+  </div>
+
+  <script src="../lib/api.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

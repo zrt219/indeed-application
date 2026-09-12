@@ -1,0 +1,263 @@
+/* Job Application Tracker — Popup Styles */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  color: #1a1a2e;
+  background: #f8f9fa;
+  width: 340px;
+  min-height: 480px;
+}
+
+.popup-container {
+  padding: 16px;
+}
+
+/* Header */
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.popup-header h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.status-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: #e9ecef;
+  color: #6c757d;
+}
+
+.status-badge.connected {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.cloud {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.status-badge.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+  transition: transform 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-1px);
+}
+
+.stat-number {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.stat-label {
+  display: block;
+  font-size: 11px;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.stat-card.submitted .stat-number { color: #28a745; }
+.stat-card.queued .stat-number { color: #007bff; }
+.stat-card.action .stat-number { color: #fd7e14; }
+.stat-card.total .stat-number { color: #6c757d; }
+
+/* Actions */
+.actions-section {
+  margin-bottom: 16px;
+}
+
+.actions-section h2,
+.ledger-section h2 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.btn-secondary {
+  background: #28a745;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #1e7e34;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.btn-ghost:hover {
+  background: #e9ecef;
+}
+
+/* Ledger Feed */
+.ledger-feed {
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.ledger-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 12px;
+}
+
+.ledger-item:last-child {
+  border-bottom: none;
+}
+
+.ledger-item .event-type {
+  font-weight: 600;
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.event-type.DISCOVERED { background: #e3f2fd; color: #1565c0; }
+.event-type.QUEUED { background: #e8f5e9; color: #2e7d32; }
+.event-type.APPLICATION_STARTED { background: #fff3e0; color: #e65100; }
+.event-type.SUBMISSION_CONFIRMED { background: #e8f5e9; color: #1b5e20; }
+.event-type.REQUIRES_MANUAL_ACTION { background: #fce4ec; color: #c62828; }
+
+.ledger-item .event-time {
+  color: #adb5bd;
+  font-size: 10px;
+  float: right;
+}
+
+.ledger-item .event-detail {
+  color: #495057;
+  margin-top: 2px;
+}
+
+.loading-text {
+  padding: 16px;
+  text-align: center;
+  color: #adb5bd;
+}
+
+/* Footer */
+.popup-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e9ecef;
+  font-size: 12px;
+}
+
+.popup-footer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.popup-footer a:hover {
+  text-decoration: underline;
+}
+
+.popup-footer span {
+  color: #dee2e6;
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 12px;
+  left: 16px;
+  right: 16px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  z-index: 1000;
+  animation: slideUp 0.3s ease;
+}
+
+.toast.success { background: #d4edda; color: #155724; }
+.toast.error { background: #f8d7da; color: #721c24; }
+.toast.info { background: #cce5ff; color: #004085; }
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
