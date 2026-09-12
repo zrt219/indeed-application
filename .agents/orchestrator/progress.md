@@ -1,12 +1,9 @@
 # Progress — Orchestrator
 
 ## Current Status
-Last visited: 2026-09-12T05:53:45Z
+Last visited: 2026-09-12T06:02:05Z
 - [x] 0. Survey & Feature Inventory
   - [x] Spawn 3 Explorers to survey codebase, architecture, dependencies, and requirements
-    - [x] survey_explorer_1 (conv: 6da8d4f1-51ed-4ca1-a524-28f73024ef47) - completed
-    - [x] survey_explorer_2 (conv: 45ededb2-20c5-4ed6-8a06-4a7a9edc2048) - completed
-    - [x] survey_spec_miner_3 (conv: 4ef22bb5-1503-419b-b535-00b13478db65) - completed
   - [x] Consolidate Feature Inventory into PROJECT.md
 - [/] 1. E2E Testing Track Initialization
   - [x] Spawn E2E Test Writer (conv: 34df1fb5-2e0e-4083-8fe0-abd900952021)
@@ -14,9 +11,13 @@ Last visited: 2026-09-12T05:53:45Z
   - [ ] Await TEST_READY.md
 - [/] 2. Implementation Milestones
   - [/] Milestone 1: Indeed Job Discovery & Auto-Ingestion Crawler
-    - [x] Dispatched M1 Worker (conv: 61710727-6c05-42f2-9e26-029edb71a889)
-    - [ ] M1 Reviewers & Challengers
-    - [ ] M1 Forensic Auditor & Gate
+    - [x] M1 Worker completed (conv: 61710727-6c05-42f2-9e26-029edb71a889)
+    - [x] Dispatched M1 Reviewer 1 (conv: 04e7264b-16f7-454f-9679-fafaf894c4b4)
+    - [x] Dispatched M1 Reviewer 2 (conv: be726383-5974-41fe-b341-0cb19d0d5a72)
+    - [x] Dispatched M1 Challenger 1 (conv: 71b7e9e1-010a-431f-a7c6-040af388c0fe)
+    - [x] Dispatched M1 Challenger 2 (conv: f09e6b66-ba1b-4c0d-a436-1ee870e4a6b3)
+    - [x] Dispatched M1 Forensic Auditor (conv: b7f32213-96e2-4120-b56c-6908ac14af3c)
+    - [ ] Await verdicts and evaluate Gate
   - [ ] Milestone 2: Automated 30-Job Application Execution Loop
   - [ ] Milestone 3: Immutable Ledger Logging & Outbox Cloud Synchronization
   - [ ] Milestone 4: Verification, Audit Trail & Live Cloud Metrics

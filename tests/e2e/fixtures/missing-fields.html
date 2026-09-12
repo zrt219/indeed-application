@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Incomplete Form with Validation Error</title>
+</head>
+<body>
+  <h1>Frontend Engineer Application</h1>
+  <form id="invalid-form">
+    <div class="form-group">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" required aria-invalid="true" class="field-error">
+      <span class="error-message ia-FieldError">This field is mandatory</span>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required aria-invalid="true">
+    </div>
+    <button type="submit" id="submit-btn">Submit application</button>
+  </form>
+</body>
+</html>

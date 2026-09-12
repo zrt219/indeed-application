@@ -1,4 +1,4 @@
-﻿# BRIEFING — 2026-09-12T05:53:34Z
+﻿# BRIEFING — 2026-09-12T06:01:30Z
 
 ## Mission
 Implement and verify Milestone 1: Indeed Job Discovery & Auto-Ingestion Crawler, fixing lint errors, exporting curated tech jobs, ensuring idempotent deduplication and atomic event emission, and authoring comprehensive unit tests.
@@ -22,7 +22,7 @@ Implement and verify Milestone 1: Indeed Job Discovery & Auto-Ingestion Crawler,
 
 ## Current Parent
 - Conversation ID: bb7c5a45-87ed-4b53-9fb0-6a58e2e8c381
-- Updated: not yet
+- Updated: 2026-09-12T06:01:30Z
 
 ## Task Summary
 - **What to build**: Fix lint and export issues in `indeed-search.ts`, verify full discovery and queue ingestion logic, and build complete unit test coverage in `tests/unit/indeed-search.test.ts`.
@@ -31,22 +31,27 @@ Implement and verify Milestone 1: Indeed Job Discovery & Auto-Ingestion Crawler,
 - **Code layout**: `src/engine/discovery/indeed-search.ts`, `tests/unit/indeed-search.test.ts`.
 
 ## Key Decisions Made
-- Confirmed test isolation in SQLite: test jobs will use unique test URLs with cleanup before/after runs to avoid interfering with operational data.
+- Exported `CURATED_TECH_JOBS` from `src/engine/discovery/indeed-search.ts` to allow testing curated dataset qualification and fallback mechanisms.
+- Changed `discoveredCards` declaration from `let` to `const` to resolve ESLint `prefer-const` rule violation.
+- Added page closing logic in `finally` block of `scrapeIndeedLive` to avoid orphan Playwright pages.
+- Enhanced `QUEUED` event metadata to include `url`, `title`, and `employer` for outbox cloud sync.
+- Created comprehensive unit test suite in `tests/unit/indeed-search.test.ts` covering 6 test suites and 13 tests with mocked Playwright routes for deterministic, isolated testing against local SQLite and EventLedger.
 
 ## Artifact Index
 - `src/engine/discovery/indeed-search.ts` — Discovery crawler and curated tech job dataset
-- `tests/unit/indeed-search.test.ts` — Unit test suite for card extraction, qualification scoring, deduplication, and bot challenges
+- `tests/unit/indeed-search.test.ts` — 13 unit tests covering discovery, scoring, deduplication, and challenge handling
 - `D:\programming\job-application-agent\.agents\m1_worker\handoff.md` — 5-component handoff report
 
 ## Change Tracker
-- **Files modified**: None yet
-- **Build status**: Lint failing (1 error in `indeed-search.ts:369`)
-- **Pending issues**: Fix `prefer-const`, export `CURATED_TECH_JOBS`, write `indeed-search.test.ts`
+- **Files modified**: `src/engine/discovery/indeed-search.ts` (export CURATED_TECH_JOBS, const discoveredCards, page close in finally, QUEUED metadata enhancement)
+- **Files created**: `tests/unit/indeed-search.test.ts` (13 tests across 6 test suites)
+- **Build status**: `npx vitest run tests/unit/indeed-search.test.ts --fileParallelism=false` passed (13/13 passed)
+- **Pending issues**: None
 
 ## Quality Status
-- **Build/test result**: Existing vitest tests pass (33 passed)
-- **Lint status**: 1 error in `src/engine/discovery/indeed-search.ts:369` (`prefer-const`)
-- **Tests added/modified**: `tests/unit/indeed-search.test.ts` (to be created)
+- **Build/test result**: 13 passed in `tests/unit/indeed-search.test.ts` (31.5s execution time)
+- **Lint status**: Clean (0 errors, 4 warnings in non-owned files)
+- **Tests added/modified**: 13 comprehensive unit tests in `tests/unit/indeed-search.test.ts`
 
 ## Loaded Skills
 - None specified by dispatch

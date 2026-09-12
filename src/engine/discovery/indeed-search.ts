@@ -457,6 +457,9 @@ export class IndeedSearchCrawler {
               status: 'QUEUED',
               fitScore: qualification.fitScore,
               reason: 'Fit score met threshold >= ' + minFitScore,
+              url: card.url,
+              title: card.title,
+              employer: card.employer,
             },
           });
         } else {
@@ -466,6 +469,8 @@ export class IndeedSearchCrawler {
         jobRecord = existing;
         if (existing.status === 'QUEUED') {
           queuedCount++;
+        } else {
+          skippedCount++;
         }
       }
 
