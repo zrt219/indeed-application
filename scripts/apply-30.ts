@@ -94,8 +94,7 @@ async function main() {
   console.log(`Total Target Jobs:    ${jobsToApply.length}`);
   console.log(`Successfully Submitted: ${successCount}`);
   console.log(`Action Needed / Escalated: ${actionNeededCount}`);
-  console.log(`Failed / Halted:       ${failedCount}`);
-  console.log(`Outbox Events Synced:  ${synced}`);
+  console.log(`Outbox Events Synced:  ${remainingPending === 0 ? 'All Synced' : remainingPending + ' pending'}`);
   console.log('====================================================\n');
 }
 

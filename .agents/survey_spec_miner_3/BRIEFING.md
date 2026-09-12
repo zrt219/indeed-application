@@ -1,4 +1,4 @@
-# BRIEFING — 2026-09-12T05:47:00Z
+# BRIEFING — 2026-09-12T05:52:00Z
 
 ## Mission
 Discover and document exact specifications, schemas, interfaces, behaviors, and edge cases for the Playwright execution loop, QA cascade, EventLedger, and Outbox Cloud Sync.
@@ -19,7 +19,7 @@ Discover and document exact specifications, schemas, interfaces, behaviors, and 
 
 ## Current Parent
 - Conversation ID: bb7c5a45-87ed-4b53-9fb0-6a58e2e8c381
-- Updated: not yet
+- Updated: 2026-09-12T05:52:00Z
 
 ## Task Summary
 - **What to build**: Specification discovery report for execution loop, QA cascade, EventLedger, and Outbox sync.
@@ -28,7 +28,10 @@ Discover and document exact specifications, schemas, interfaces, behaviors, and 
 - **Code layout**: `src/engine/`, `src/app/`, `prisma/`, `tests/`.
 
 ## Key Decisions Made
-- Initializing specification probe across existing codebase, Prisma schema, API route handlers, and live Vercel endpoint.
+- Probed live production Vercel sync API (`https://job-application-agent-kohl.vercel.app/api/sync`) and verified schema/foreign key behavior empirically.
+- Identified critical requirement: local cuid `jobId`/`applicationId` must not be sent at top-level of outbox payloads to Vercel; `url` must be top-level so Vercel can upsert the job and resolve cloud foreign keys.
+- Documented method signature mismatch in `apply-30.ts:79` calling non-existent `OutboxSyncWorker.syncPendingBatch`.
+- Cataloged 17 discovered features and 14 edge cases in `handoff.md`.
 
 ## Artifact Index
 - D:\programming\job-application-agent\.agents\survey_spec_miner_3\handoff.md — Final 5-component handoff report.
