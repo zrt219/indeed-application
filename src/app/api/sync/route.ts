@@ -13,22 +13,34 @@ export async function POST(req: Request) {
     let syncedCount = 0;
 
     for (const evt of events) {
-      const { id, eventType, source, payload, createdAt } = evt;
+      const eventId = evt.id || evt.eventId || crypto.randomUUID();
+      const eventType = evt.eventType || "EVENT";
+      const source = evt.source || "PLAYWRIGHT_AUTONOMOUS";
+      const rawPayload = evt.payload;
+      const createdAt = evt.createdAt;
 
-      // 1. Check if event already exists (Idempotent by UUID)
-      const existing = await prisma.eventLedger.findUnique({
-        where: { id }
-      });
-
-      if (!existing) {
-        let parsedPayload: Record<string, unknown> = {};
+      // Normalize payload string vs object
+      let parsedPayload: Record<string, unknown> = {};
+      let serializedPayload = "{}";
+      if (typeof rawPayload === "string") {
+        serializedPayload = rawPayload;
         try {
-          parsedPayload = JSON.parse(payload) as Record<string, unknown>;
+          parsedPayload = JSON.parse(rawPayload) as Record<string, unknown>;
         } catch {
           parsedPayload = {};
         }
+      } else if (rawPayload && typeof rawPayload === "object") {
+        parsedPayload = rawPayload as Record<string, unknown>;
+        serializedPayload = JSON.stringify(rawPayload);
+      }
 
-        // Upsert Job if URL or externalId present
+      // 1. Check if event already exists (Idempotent by UUID)
+      const existing = await prisma.eventLedger.findUnique({
+        where: { id: eventId }
+      });
+
+      if (!existing) {
+        // Upsert Job if URL present
         let targetJobId = parsedPayload.jobId as string | undefined;
         if (!targetJobId && parsedPayload.url) {
           const job = await prisma.job.upsert({
@@ -50,12 +62,12 @@ export async function POST(req: Request) {
         // Create the event record
         await prisma.eventLedger.create({
           data: {
-            id,
+            id: eventId,
             type: eventType,
-            source: source || "PLAYWRIGHT_AUTONOMOUS",
+            source: source,
             jobId: targetJobId,
             applicationId: parsedPayload.applicationId as string | undefined,
-            metadata: payload,
+            metadata: serializedPayload,
             timestamp: new Date(createdAt || Date.now())
           }
         });
