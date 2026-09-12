@@ -1,82 +1,171 @@
 let currentJob = null;
-const API_BASE = "http://localhost:3000/api";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const statusBadge = document.getElementById("apiStatus");
+  const endpointSelect = document.getElementById("endpointSelect");
   const queueBtn = document.getElementById("queueBtn");
+  const trackAppliedBtn = document.getElementById("trackAppliedBtn");
+  const statusSelect = document.getElementById("statusSelect");
+  const updateStatusBtn = document.getElementById("updateStatusBtn");
   const dashboardBtn = document.getElementById("dashboardBtn");
   const feedbackMsg = document.getElementById("feedbackMsg");
 
-  // 1. Check local Next.js API status
-  try {
-    const res = await fetch(`${API_BASE}/jobs`, { method: "GET" });
-    if (res.ok) {
-      statusBadge.textContent = "API Connected";
-      statusBadge.classList.add("online");
-    } else {
-      statusBadge.textContent = "API Error";
+  // Load saved endpoint preference
+  chrome.storage.local.get(["targetEndpoint"], (res) => {
+    if (res.targetEndpoint) {
+      endpointSelect.value = res.targetEndpoint;
     }
-  } catch (err) {
-    statusBadge.textContent = "API Offline (Start Next.js)";
+    checkHealth();
+  });
+
+  endpointSelect.addEventListener("change", () => {
+    chrome.storage.local.set({ targetEndpoint: endpointSelect.value });
+    checkHealth();
+  });
+
+  function getApiBase() {
+    return `${endpointSelect.value}/api`;
   }
 
-  // 2. Query active tab and request extraction
+  async function checkHealth() {
+    statusBadge.textContent = "Checking...";
+    statusBadge.className = "status-badge";
+    try {
+      const res = await fetch(`${getApiBase()}/jobs`, { method: "GET" });
+      if (res.ok) {
+        statusBadge.textContent = "Online";
+        statusBadge.classList.add("online");
+      } else {
+        statusBadge.textContent = "Error";
+      }
+    } catch {
+      statusBadge.textContent = "Offline";
+    }
+  }
+
+  // Detect active tab Indeed details
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (tab && tab.url && tab.url.includes("indeed.com")) {
     chrome.tabs.sendMessage(tab.id, { action: "EXTRACT_JOB" }, (response) => {
       if (chrome.runtime.lastError || !response || !response.data) {
-        document.getElementById("jobTitle").textContent = "Could not extract job from this page.";
+        document.getElementById("jobTitle").textContent = "Could not extract job on this tab.";
         return;
       }
 
       currentJob = response.data;
-      document.getElementById("jobTitle").textContent = currentJob.title || "Job Title Found";
+      document.getElementById("jobTitle").textContent = currentJob.title || "Indeed Position";
       document.getElementById("jobCompany").textContent = `🏢 ${currentJob.employer || "Unknown"}`;
-      document.getElementById("jobLocation").textContent = `📍 ${currentJob.location || "Location unknown"}`;
-      
-      if (currentJob.salary) {
-        const salEl = document.getElementById("jobSalary");
-        salEl.textContent = currentJob.salary;
-        salEl.style.display = "inline-block";
-      }
+      document.getElementById("jobLocation").textContent = `📍 ${currentJob.location || "Remote"}`;
 
       queueBtn.disabled = false;
+      trackAppliedBtn.disabled = false;
+      updateStatusBtn.disabled = false;
     });
   } else {
-    document.getElementById("jobTitle").textContent = "Navigate to an Indeed job listing to import.";
+    document.getElementById("jobTitle").textContent = "Open an Indeed job listing to activate.";
   }
 
-  // 3. Queue Button Handler
+  function showMsg(text, isError = false) {
+    feedbackMsg.textContent = text;
+    feedbackMsg.className = isError ? "msg error" : "msg success";
+  }
+
+  // 1. Queue for Playwright Autonomous Apply
   queueBtn.addEventListener("click", async () => {
     if (!currentJob) return;
     queueBtn.disabled = true;
-    feedbackMsg.textContent = "Sending to application queue...";
-    feedbackMsg.className = "msg";
+    showMsg("Adding to autonomous queue...");
 
     try {
-      const res = await fetch(`${API_BASE}/jobs`, {
+      const res = await fetch(`${getApiBase()}/jobs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(currentJob)
+        body: JSON.stringify({
+          ...currentJob,
+          source: "PLAYWRIGHT_AUTONOMOUS"
+        })
       });
       const data = await res.json();
       if (res.ok) {
-        feedbackMsg.textContent = "✓ Added to Agent Queue!";
-        feedbackMsg.className = "msg success";
+        showMsg("✓ Queued for Playwright!");
       } else {
-        feedbackMsg.textContent = data.error || "Failed to queue job.";
-        feedbackMsg.className = "msg error";
+        showMsg(data.error || "Failed to queue", true);
         queueBtn.disabled = false;
       }
     } catch (err) {
-      feedbackMsg.textContent = "Error connecting to local server.";
-      feedbackMsg.className = "msg error";
+      showMsg("Network error connecting to API", true);
       queueBtn.disabled = false;
     }
   });
 
-  // 4. Open Dashboard Handler
+  // 2. Track as Manually Applied
+  trackAppliedBtn.addEventListener("click", async () => {
+    if (!currentJob) return;
+    trackAppliedBtn.disabled = true;
+    showMsg("Recording submission in ledger...");
+
+    try {
+      const res = await fetch(`${getApiBase()}/applications`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: currentJob.url,
+          title: currentJob.title,
+          employer: currentJob.employer,
+          source: "CHROME_EXTENSION",
+          status: "SUBMISSION_CONFIRMED",
+          notes: "Applied directly via Indeed browser extension."
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showMsg("✓ Recorded in Application Ledger!");
+      } else {
+        showMsg(data.error || "Failed to record", true);
+        trackAppliedBtn.disabled = false;
+      }
+    } catch {
+      showMsg("Network error connecting to API", true);
+      trackAppliedBtn.disabled = false;
+    }
+  });
+
+  // 3. Update Lifecycle Status
+  updateStatusBtn.addEventListener("click", async () => {
+    if (!currentJob) return;
+    const newStatus = statusSelect.value;
+    updateStatusBtn.disabled = true;
+    showMsg(`Updating status to ${newStatus}...`);
+
+    try {
+      const res = await fetch(`${getApiBase()}/applications`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: currentJob.url,
+          title: currentJob.title,
+          employer: currentJob.employer,
+          source: "CHROME_EXTENSION",
+          status: newStatus,
+          notes: `Status updated via Chrome Extension to ${newStatus}`
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showMsg(`✓ Updated to ${newStatus}!`);
+        updateStatusBtn.disabled = false;
+      } else {
+        showMsg(data.error || "Failed to update", true);
+        updateStatusBtn.disabled = false;
+      }
+    } catch {
+      showMsg("Network error connecting to API", true);
+      updateStatusBtn.disabled = false;
+    }
+  });
+
+  // 4. Dashboard button
   dashboardBtn.addEventListener("click", () => {
-    chrome.tabs.create({ url: "http://localhost:3000" });
+    chrome.tabs.create({ url: endpointSelect.value });
   });
 });

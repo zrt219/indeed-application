@@ -8,20 +8,21 @@ generator client {
 }
 
 model Job {
-  id            String         @id @default(cuid())
-  externalId    String?
-  title         String
-  employer      String
-  url           String         @unique
-  location      String?
-  description   String?
-  fitScore      Int            @default(0)
-  status        String         @default("NEW") // NEW, ANALYZED, QUEUED, APPLYING, SUBMITTED, BLOCKED_REQUIRES_MANUAL_ACTION, SUBMISSION_FAILED, REJECTED
-  source        String         @default("indeed")
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  applications  Application[]
-  events        EventLedger[]
+  id           String        @id @default(cuid())
+  externalId   String?
+  title        String
+  employer     String
+  url          String        @unique
+  location     String?
+  description  String?
+  salary       String?
+  fitScore     Int           @default(0)
+  status       String        @default("DISCOVERED") // DISCOVERED, ANALYZED, QUEUED, APPLICATION_STARTED, SUBMISSION_CONFIRMED, BLOCKED_REQUIRES_MANUAL_ACTION, SUBMISSION_FAILED, SKIPPED, REJECTED, INTERVIEW, OFFER
+  source       String        @default("IMPORT")     // PLAYWRIGHT_AUTONOMOUS, CHROME_EXTENSION, MANUAL, IMPORT
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  applications Application[]
+  events       EventLedger[]
   manualReviews ManualReview[]
 }
 
@@ -31,9 +32,16 @@ model Application {
   job              Job            @relation(fields: [jobId], references: [id], onDelete: Cascade)
   resumeId         String?
   resume           Resume?        @relation(fields: [resumeId], references: [id], onDelete: SetNull)
-  status           String         @default("PENDING") // PENDING, APPLYING, SUBMITTED, FAILED, REQUIRES_MANUAL_ACTION
+  source           String         @default("PLAYWRIGHT_AUTONOMOUS") // PLAYWRIGHT_AUTONOMOUS, CHROME_EXTENSION, MANUAL, IMPORT
+  status           String         @default("APPLICATION_STARTED")  // APPLICATION_STARTED, FORM_IN_PROGRESS, READY_TO_SUBMIT, SUBMITTING, SUBMISSION_CONFIRMED, REQUIRES_MANUAL_ACTION, SUBMISSION_FAILED, WITHDRAWN, REJECTED, INTERVIEW, OFFER
+  applicationDate  DateTime       @default(now())
   submittedAt      DateTime?
+  followUpDate     DateTime?
+  resumeUsed       String?
+  coverLetterUsed  String?
   confirmationText String?
+  failureReason    String?
+  screenshotPath   String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   events           EventLedger[]
@@ -46,45 +54,69 @@ model EventLedger {
   application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   jobId         String?
   job           Job?         @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  type          String       // STATE_CHANGE, FIELD_ANSWERED, OLLAMA_QUERY, FORM_INSPECTED, MANUAL_INTERVENTION_NEEDED, ERROR, SUBMISSION_CONFIRMED, FIT_EVALUATED
+  source        String       @default("PLAYWRIGHT_AUTONOMOUS") // PLAYWRIGHT_AUTONOMOUS, CHROME_EXTENSION, MANUAL, IMPORT
+  type          String       // DISCOVERED, ANALYZED, QUEUED, APPLICATION_STARTED, FORM_IN_PROGRESS, FIELD_ANSWERED, OLLAMA_QUERY, FORM_INSPECTED, READY_TO_SUBMIT, SUBMITTING, SUBMISSION_CONFIRMED, MANUAL_INTERVENTION_NEEDED, SUBMISSION_FAILED, REJECTED, INTERVIEW, OFFER
   metadata      String       // JSON stringified payload
   timestamp     DateTime     @default(now())
 }
 
+model OutboxEvent {
+  id            String    @id @default(cuid())
+  eventType     String    // DISCOVERED, APPLICATION_STARTED, SUBMISSION_CONFIRMED, STATUS_UPDATED, etc.
+  source        String    @default("PLAYWRIGHT_AUTONOMOUS") // PLAYWRIGHT_AUTONOMOUS, CHROME_EXTENSION, MANUAL, IMPORT
+  payload       String    // JSON stringified payload
+  createdAt     DateTime  @default(now())
+  syncedAt      DateTime?
+  syncAttempts  Int       @default(0)
+  lastSyncError String?
+
+  @@index([syncedAt])
+}
+
+model SyncState {
+  id           String   @id @default("singleton")
+  lastSyncedAt DateTime @default(now())
+  totalSynced  Int      @default(0)
+  lastError    String?
+  updatedAt    DateTime @updatedAt
+}
+
 model Resume {
   id           String        @id @default(cuid())
-  name         String        @default("Default")
+  name         String
   path         String
-  targetRoles  String        // Comma-separated or JSON string
-  seniority    String        // Junior, Mid, Senior, Lead, Principal
-  technologies String        // Comma-separated or JSON list
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  targetRoles  String        // JSON stringified array
+  targetSkills String        // JSON stringified array
+  seniority    String        @default("Senior")
+  technologies String        // JSON stringified array
+  lastUpdated  DateTime      @default(now())
   applications Application[]
 }
 
 model AnswerBank {
-  id         String   @id @default(cuid())
-  category   String   // WORK_AUTHORIZATION, SALARY, EXPERIENCE, EDUCATION, GENERAL, DIVERSITY
-  question   String
-  answer     String
-  confidence Float    @default(1.0)
-  verified   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String   @id @default(cuid())
+  category    String   @default("GENERAL")
+  question    String   @unique
+  patterns    String   // JSON stringified array of regex/match patterns
+  answer      String
+  fieldType   String   @default("text") // text, radio, select, number, checkbox
+  confidence  Float    @default(1.0)
+  source      String   @default("MANUAL_VERIFIED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model ManualReview {
-  id              String       @id @default(cuid())
-  applicationId   String?
-  application     Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  jobId           String?
-  job             Job?         @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  question        String
-  context         String?
-  suggestedAnswer String?
-  status          String       @default("PENDING") // PENDING, RESOLVED, DISMISSED
-  resolvedAnswer  String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id             String       @id @default(cuid())
+  jobId          String?
+  job            Job?         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  applicationId  String?
+  application    Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  question       String
+  proposedAnswer String?
+  resolvedAnswer String?
+  reason         String?
+  status         String       @default("PENDING") // PENDING, APPROVED, EDITED, SKIPPED
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 }

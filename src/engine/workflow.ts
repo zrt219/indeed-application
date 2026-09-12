@@ -207,7 +207,7 @@ export class ApplicationWorkflowEngine {
                 applicationId: application.id,
                 jobId: job.id,
                 question: item.label,
-                context: `Field selector: ${item.selector}. Step: ${currentStep}`,
+                reason: `Field selector: ${item.selector}. Step: ${currentStep}`,
                 status: 'PENDING',
               },
             });

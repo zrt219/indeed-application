@@ -53,19 +53,23 @@ describe('Application Workflow Engine & State Machine', () => {
 
   describe('Ledger Audit Trail', () => {
     it('should record state changes to EventLedger', async () => {
+      const path = await import('path');
+      const formUrl = `file://${path.resolve(__dirname, '../synthetic/form.html').replace(/\\/g, '/')}`;
+
       const job = await prisma.job.create({
         data: {
           title: 'Full Stack Engineer',
           employer: 'Beta Systems',
-          url: 'https://example.com/jobs/999',
+          url: formUrl,
           status: 'QUEUED',
           fitScore: 85,
         },
       });
 
-      // Execute application (it will fail gracefully to start on dummy URL or invalid page, but will log state changes)
+      // Execute application
       const result = await workflow.executeApplication(job.id);
       expect(result.applicationId).toBeDefined();
+      expect(result.finalState).toBe('SUBMITTED');
 
       const events = await prisma.eventLedger.findMany({
         where: { jobId: job.id },
@@ -75,6 +79,6 @@ describe('Application Workflow Engine & State Machine', () => {
       expect(events.length).toBeGreaterThan(0);
       const types = events.map((e) => e.type);
       expect(types).toContain('STATE_CHANGE');
-    });
+    }, 20000);
   });
 });

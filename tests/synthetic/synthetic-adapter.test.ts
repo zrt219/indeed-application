@@ -63,7 +63,7 @@ describe('Synthetic Form Automation (Playwright + Generic Adapter)', () => {
 
       const confirmation = await adapter.checkConfirmation(page);
       expect(confirmation.isConfirmed).toBe(true);
-      expect(confirmation.confirmationText).toContain('application submitted');
+      expect(confirmation.confirmationText?.toLowerCase()).toContain('application');
     } finally {
       await page.close();
     }

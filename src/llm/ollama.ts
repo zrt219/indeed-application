@@ -46,24 +46,36 @@ export function loadAnswerBank(): AnswerBankEntry[] {
 export function matchAnswerBank(questionText: string, bank: AnswerBankEntry[] = loadAnswerBank()): QuestionAnswerResponse | null {
   const normalizedQuestion = questionText.toLowerCase().trim();
 
+  // Collect all matching patterns to find the longest (most specific) match
+  let bestMatch: { entry: AnswerBankEntry; matchedLength: number } | null = null;
+
   for (const entry of bank) {
     for (const pattern of entry.patterns) {
-      if (normalizedQuestion.includes(pattern.toLowerCase())) {
-        let inputType: QuestionAnswerResponse['suggestedInputType'] = 'text';
-        if (entry.booleanValue !== undefined) inputType = 'boolean';
-        else if (entry.numericValue !== undefined) inputType = 'number';
-
-        return {
-          canAnswer: true,
-          answer: entry.answer,
-          confidence: entry.confidence,
-          source: 'answer_bank',
-          requiresManualReview: false,
-          suggestedInputType: inputType,
-        };
+      const p = pattern.toLowerCase();
+      if (normalizedQuestion.includes(p)) {
+        if (!bestMatch || p.length > bestMatch.matchedLength) {
+          bestMatch = { entry, matchedLength: p.length };
+        }
       }
     }
   }
+
+  if (bestMatch) {
+    const entry = bestMatch.entry;
+    let inputType: QuestionAnswerResponse['suggestedInputType'] = 'text';
+    if (entry.booleanValue !== undefined) inputType = 'boolean';
+    else if (entry.numericValue !== undefined) inputType = 'number';
+
+    return {
+      canAnswer: true,
+      answer: entry.answer,
+      confidence: entry.confidence,
+      source: 'answer_bank',
+      requiresManualReview: false,
+      suggestedInputType: inputType,
+    };
+  }
+
   return null;
 }
 

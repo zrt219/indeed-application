@@ -13,8 +13,6 @@ import {
   ChevronRight,
   RefreshCw,
   Sparkles,
-  Globe,
-  Smartphone,
 } from 'lucide-react';
 
 interface Job {

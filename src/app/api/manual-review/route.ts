@@ -74,8 +74,9 @@ export async function POST(request: NextRequest) {
             category,
             question: review.question,
             answer: String(resolvedAnswer),
+            patterns: JSON.stringify([review.question.toLowerCase().trim()]),
             confidence: 1.0,
-            verified: true,
+            source: "MANUAL_VERIFIED",
           },
         });
 
