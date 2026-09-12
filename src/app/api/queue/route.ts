@@ -1,16 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/db/prisma';
-import { getWorkerStatus, processNextJob, processQueueBatch } from '@/queue/worker';
-
 export async function GET() {
   try {
-    const [queuedJobs, workerStatus, queuedCount] = await Promise.all([
+    const isCloud = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+    let workerStatus = {
+      isRunning: false,
+      activeJobsCount: 0,
+      mode: isCloud ? 'cloud-dashboard' : 'local-node',
+      message: isCloud
+        ? 'Playwright worker runs on local host machine'
+        : 'Worker idle. Run `npm run worker` to start processing.',
+    };
+
+    if (!isCloud) {
+      try {
+        const { getWorkerStatus } = await import('@/queue/worker');
+        workerStatus = { ...workerStatus, ...getWorkerStatus() };
+      } catch {
+        // Fall back to default status if worker module unavailable
+      }
+    }
+
+    const [queuedJobs, queuedCount] = await Promise.all([
       prisma.job.findMany({
         where: { status: 'QUEUED' },
         orderBy: [{ fitScore: 'desc' }, { createdAt: 'asc' }],
         take: 20,
       }),
-      getWorkerStatus(),
       prisma.job.count({ where: { status: 'QUEUED' } }),
     ]);
 
@@ -35,8 +51,19 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { action, jobId, batchSize = 3 } = body;
+    const isCloud = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 
     if (action === 'process-next') {
+      if (isCloud) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Playwright browser automation runs locally. Run `npm run worker` on your local machine.',
+          },
+          { status: 400 }
+        );
+      }
+      const { processNextJob } = await import('@/queue/worker');
       const processed = await processNextJob();
       return NextResponse.json({
         success: true,
@@ -46,6 +73,16 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'process-batch') {
+      if (isCloud) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Playwright browser automation runs locally. Run `npm run worker` on your local machine.',
+          },
+          { status: 400 }
+        );
+      }
+      const { processQueueBatch } = await import('@/queue/worker');
       const result = await processQueueBatch(batchSize);
       return NextResponse.json({
         success: true,
