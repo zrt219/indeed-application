@@ -152,6 +152,35 @@ body {
   background: #1e7e34;
 }
 
+.link-queue-box {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.input-field {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 12px;
+  outline: none;
+  font-family: inherit;
+}
+
+.input-field:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+.btn-inline {
+  width: auto;
+  margin-bottom: 0;
+  padding: 8px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .btn-ghost {
   background: transparent;
   color: #6c757d;

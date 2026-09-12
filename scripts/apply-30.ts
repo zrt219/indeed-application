@@ -35,7 +35,7 @@ async function main() {
   }
 
   // Step 3: Execute Playwright Application Loop
-  const browserManager = new BrowserManager({ headless: true });
+  const browserManager = new BrowserManager({ headless: process.env.HEADLESS !== 'false' });
   const engine = new ApplicationWorkflowEngine(browserManager);
 
   let successCount = 0;

@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnDashboard = document.getElementById('btn-dashboard');
   const btnSettings = document.getElementById('btn-settings');
   const ledgerFeed = document.getElementById('ledger-feed');
+  const inputCustomUrl = document.getElementById('input-custom-url');
+  const btnQueueCustomUrl = document.getElementById('btn-queue-custom-url');
 
   // Toast helper
   function showToast(message, type = 'info') {
@@ -160,6 +162,48 @@ document.addEventListener('DOMContentLoaded', async () => {
       btnQueue.disabled = false;
     }
   });
+
+  // Direct URL queueing with automatic real title resolution
+  if (btnQueueCustomUrl && inputCustomUrl) {
+    btnQueueCustomUrl.addEventListener('click', async () => {
+      const url = inputCustomUrl.value.trim();
+      if (!url || !url.startsWith('http')) {
+        return showToast('Please enter a valid URL (http/https)', 'error');
+      }
+
+      btnQueueCustomUrl.disabled = true;
+      btnQueueCustomUrl.textContent = '⏳ Resolving...';
+
+      try {
+        const { data } = await api.apiPost('/api/queue/add', { url });
+        const jobTitle = data.job?.title || 'Job';
+        const fitScore = data.qualification?.fitScore ?? data.job?.fitScore ?? '?';
+
+        if (data.isNew) {
+          showToast(`Queued: "${jobTitle}" (Fit: ${fitScore}%)`, 'success');
+          inputCustomUrl.value = '';
+        } else if (data.updated) {
+          showToast(`Updated: "${jobTitle}" (Fit: ${fitScore}%)`, 'success');
+          inputCustomUrl.value = '';
+        } else {
+          showToast(`Already tracked: "${jobTitle}"`, 'info');
+        }
+        await loadStats();
+        await loadLedger();
+      } catch (err) {
+        showToast(`Failed: ${err.message}`, 'error');
+      } finally {
+        btnQueueCustomUrl.textContent = 'Queue Link';
+        btnQueueCustomUrl.disabled = false;
+      }
+    });
+
+    inputCustomUrl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        btnQueueCustomUrl.click();
+      }
+    });
+  }
 
   btnApply.addEventListener('click', async () => {
     const job = await getCurrentTabJob();
