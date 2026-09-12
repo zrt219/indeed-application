@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/schema/config.json",
+  "name": "job-application-agent",
+  "version": "0.1.0",
+  "description": "Autonomous Job Application Pipeline with Playwright and local Phi-3 LLM",
+  "commands": {
+    "test": "npm test",
+    "build": "npm run build",
+    "dev": "npm run dev",
+    "worker": "npm run worker",
+    "lint": "npm run lint",
+    "db:push": "npx prisma db push"
+  },
+  "testing": {
+    "framework": "vitest",
+    "testMatch": ["tests/**/*.test.ts"]
+  },
+  "database": {
+    "provider": "sqlite",
+    "schema": "prisma/schema.prisma"
+  },
+  "workflows": {
+    "primaryTarget": "Indeed",
+    "localLLM": "Ollama/Phi-3",
+    "browserEngine": "Playwright"
+  }
+}

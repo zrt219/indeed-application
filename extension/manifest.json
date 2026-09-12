@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Indeed Job Application Assistant",
+  "version": "1.0.0",
+  "description": "One-click job importer and tracker connecting Indeed to your local Antigravity Job Application Agent.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.indeed.com/*",
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Indeed Job Agent"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.indeed.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

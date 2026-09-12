@@ -1,0 +1,172 @@
+[
+  {
+    "id": "ans-work-auth-1",
+    "category": "WORK_AUTHORIZATION",
+    "patterns": [
+      "authorized to work",
+      "legally authorized",
+      "legal right to work",
+      "eligible to work in the united states"
+    ],
+    "answer": "Yes",
+    "booleanValue": true,
+    "confidence": 1.0,
+    "notes": "Candidate is a US Citizen"
+  },
+  {
+    "id": "ans-work-auth-2",
+    "category": "WORK_AUTHORIZATION",
+    "patterns": [
+      "sponsorship",
+      "require visa sponsorship",
+      "require now or in the future",
+      "h-1b",
+      "employment visa"
+    ],
+    "answer": "No",
+    "booleanValue": false,
+    "confidence": 1.0,
+    "notes": "Does not require sponsorship"
+  },
+  {
+    "id": "ans-experience-total",
+    "category": "EXPERIENCE",
+    "patterns": [
+      "years of professional experience",
+      "years of software engineering experience",
+      "total years of work experience",
+      "how many years of experience"
+    ],
+    "answer": "6",
+    "numericValue": 6,
+    "confidence": 0.95,
+    "notes": "6 years cumulative since 2018"
+  },
+  {
+    "id": "ans-exp-ts",
+    "category": "EXPERIENCE",
+    "patterns": [
+      "years of experience with typescript",
+      "years with typescript",
+      "typescript experience"
+    ],
+    "answer": "5",
+    "numericValue": 5,
+    "confidence": 0.95,
+    "notes": "5+ years using TypeScript"
+  },
+  {
+    "id": "ans-exp-react",
+    "category": "EXPERIENCE",
+    "patterns": [
+      "years of experience with react",
+      "years with react",
+      "react experience",
+      "react.js"
+    ],
+    "answer": "6",
+    "numericValue": 6,
+    "confidence": 0.95,
+    "notes": "6 years React experience"
+  },
+  {
+    "id": "ans-exp-node",
+    "category": "EXPERIENCE",
+    "patterns": [
+      "years of experience with node",
+      "years with node.js",
+      "nodejs experience"
+    ],
+    "answer": "5",
+    "numericValue": 5,
+    "confidence": 0.95,
+    "notes": "5 years Node.js backend experience"
+  },
+  {
+    "id": "ans-salary-expectation",
+    "category": "SALARY",
+    "patterns": [
+      "salary expectation",
+      "desired salary",
+      "target compensation",
+      "annual compensation",
+      "minimum salary"
+    ],
+    "answer": "140000",
+    "numericValue": 140000,
+    "confidence": 0.9,
+    "notes": "Target $140,000 - $155,000 base"
+  },
+  {
+    "id": "ans-edu-level",
+    "category": "EDUCATION",
+    "patterns": [
+      "highest level of education",
+      "completed degree",
+      "degree level"
+    ],
+    "answer": "Bachelor's Degree",
+    "confidence": 1.0,
+    "notes": "BS Computer Science from UT Austin"
+  },
+  {
+    "id": "ans-relocation",
+    "category": "PREFERENCE",
+    "patterns": [
+      "willing to relocate",
+      "open to relocation"
+    ],
+    "answer": "No",
+    "booleanValue": false,
+    "confidence": 0.9,
+    "notes": "Remote or Austin TX only"
+  },
+  {
+    "id": "ans-notice-period",
+    "category": "AVAILABILITY",
+    "patterns": [
+      "notice period",
+      "when can you start",
+      "earliest start date",
+      "available to start"
+    ],
+    "answer": "2 weeks notice",
+    "confidence": 0.95,
+    "notes": "Standard 2 weeks"
+  },
+  {
+    "id": "ans-background-check",
+    "category": "COMPLIANCE",
+    "patterns": [
+      "background check",
+      "consent to background screening",
+      "drug test"
+    ],
+    "answer": "Yes",
+    "booleanValue": true,
+    "confidence": 1.0,
+    "notes": "Consents to standard pre-employment checks"
+  },
+  {
+    "id": "ans-eeo-veteran",
+    "category": "DIVERSITY",
+    "patterns": [
+      "veteran status",
+      "protected veteran"
+    ],
+    "answer": "I am not a protected veteran",
+    "confidence": 1.0,
+    "notes": "Standard EEO selection"
+  },
+  {
+    "id": "ans-eeo-disability",
+    "category": "DIVERSITY",
+    "patterns": [
+      "disability",
+      "physical or mental impairment"
+    ],
+    "answer": "No, I do not have a disability",
+    "confidence": 1.0,
+    "notes": "Standard EEO selection"
+  }
+]

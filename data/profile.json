@@ -1,0 +1,118 @@
+{
+  "personal": {
+    "fullName": "Alex Rivera",
+    "firstName": "Alex",
+    "lastName": "Rivera",
+    "email": "alex.rivera.dev@example.com",
+    "phone": "+1-555-019-2834",
+    "location": {
+      "city": "Austin",
+      "state": "Texas",
+      "stateCode": "TX",
+      "country": "United States",
+      "postalCode": "78701",
+      "address": "100 Congress Ave"
+    },
+    "links": {
+      "linkedin": "https://linkedin.com/in/alex-rivera-dev",
+      "github": "https://github.com/alexrivera-dev",
+      "portfolio": "https://alexrivera.dev"
+    }
+  },
+  "workAuthorization": {
+    "usAuthorized": true,
+    "requiresSponsorship": false,
+    "citizenshipStatus": "US Citizen",
+    "securityClearance": "None"
+  },
+  "summary": "Full Stack Software Engineer with 6+ years of experience building scalable distributed web applications, microservices, and modern UI systems with TypeScript, React, Next.js, Node.js, and PostgreSQL.",
+  "targetRoles": [
+    "Full Stack Software Engineer",
+    "Senior Full Stack Engineer",
+    "Software Engineer",
+    "Frontend Engineer",
+    "Backend Engineer",
+    "TypeScript Developer"
+  ],
+  "seniority": "Senior",
+  "yearsOfExperience": 6,
+  "skills": {
+    "languages": ["TypeScript", "JavaScript", "Python", "SQL", "HTML5", "CSS3"],
+    "frontend": ["React", "Next.js", "Tailwind CSS", "Redux", "Zustand", "Vue.js"],
+    "backend": ["Node.js", "Express", "NestJS", "FastAPI", "GraphQL", "REST APIs"],
+    "database": ["PostgreSQL", "SQLite", "MongoDB", "Redis", "Prisma ORM"],
+    "cloudAndDevops": ["AWS (S3, Lambda, ECS)", "Docker", "Git", "GitHub Actions", "CI/CD", "Vercel"],
+    "testing": ["Jest", "Vitest", "Playwright", "Cypress", "Testing Library"]
+  },
+  "workHistory": [
+    {
+      "company": "TechStream Solutions",
+      "title": "Senior Software Engineer",
+      "location": "Austin, TX (Hybrid)",
+      "startDate": "2022-03",
+      "endDate": "Present",
+      "current": true,
+      "highlights": [
+        "Architected core dashboard using Next.js and TypeScript serving 120k monthly active users.",
+        "Engineered background worker queue processing 5M daily webhook events with 99.98% reliability.",
+        "Mentored 4 junior and mid-level engineers on automated testing and clean architecture."
+      ]
+    },
+    {
+      "company": "Apex Cloud Systems",
+      "title": "Full Stack Engineer",
+      "location": "Remote",
+      "startDate": "2019-06",
+      "endDate": "2022-02",
+      "current": false,
+      "highlights": [
+        "Developed cloud resource monitoring microservices using Node.js, Prisma, and PostgreSQL.",
+        "Spearheaded redesign of customer web portal, cutting page load times by 40%.",
+        "Implemented comprehensive Playwright end-to-end integration test suites."
+      ]
+    },
+    {
+      "company": "VentureByte Labs",
+      "title": "Junior Web Developer",
+      "location": "Dallas, TX",
+      "startDate": "2018-05",
+      "endDate": "2019-05",
+      "current": false,
+      "highlights": [
+        "Built responsive client websites using React, Node.js, and CSS3.",
+        "Collaborated with UI/UX designers to translate Figma designs into pixel-perfect components."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Texas at Austin",
+      "degree": "Bachelor of Science",
+      "fieldOfStudy": "Computer Science",
+      "startDate": "2014-08",
+      "endDate": "2018-05",
+      "gpa": "3.8"
+    }
+  ],
+  "preferences": {
+    "desiredSalary": {
+      "currency": "USD",
+      "minimum": 130000,
+      "target": 155000
+    },
+    "workMode": ["Remote", "Hybrid"],
+    "noticePeriodDays": 14,
+    "availableStartDate": "Immediate / 2 Weeks Notice",
+    "willingToRelocate": false,
+    "travelWillingnessPercent": 10
+  },
+  "defaultAnswers": {
+    "gender": "Prefer not to disclose",
+    "raceEthnicity": "Prefer not to disclose",
+    "veteranStatus": "I am not a protected veteran",
+    "disabilityStatus": "No, I do not have a disability",
+    "felonyConviction": false,
+    "drugScreeningConsent": true,
+    "backgroundCheckConsent": true
+  }
+}

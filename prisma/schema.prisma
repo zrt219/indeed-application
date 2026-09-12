@@ -1,0 +1,90 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Job {
+  id            String         @id @default(cuid())
+  externalId    String?
+  title         String
+  employer      String
+  url           String         @unique
+  location      String?
+  description   String?
+  fitScore      Int            @default(0)
+  status        String         @default("NEW") // NEW, ANALYZED, QUEUED, APPLYING, SUBMITTED, BLOCKED_REQUIRES_MANUAL_ACTION, SUBMISSION_FAILED, REJECTED
+  source        String         @default("indeed")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  applications  Application[]
+  events        EventLedger[]
+  manualReviews ManualReview[]
+}
+
+model Application {
+  id               String         @id @default(cuid())
+  jobId            String
+  job              Job            @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  resumeId         String?
+  resume           Resume?        @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+  status           String         @default("PENDING") // PENDING, APPLYING, SUBMITTED, FAILED, REQUIRES_MANUAL_ACTION
+  submittedAt      DateTime?
+  confirmationText String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  events           EventLedger[]
+  manualReviews    ManualReview[]
+}
+
+model EventLedger {
+  id            String       @id @default(cuid())
+  applicationId String?
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  jobId         String?
+  job           Job?         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  type          String       // STATE_CHANGE, FIELD_ANSWERED, OLLAMA_QUERY, FORM_INSPECTED, MANUAL_INTERVENTION_NEEDED, ERROR, SUBMISSION_CONFIRMED, FIT_EVALUATED
+  metadata      String       // JSON stringified payload
+  timestamp     DateTime     @default(now())
+}
+
+model Resume {
+  id           String        @id @default(cuid())
+  name         String        @default("Default")
+  path         String
+  targetRoles  String        // Comma-separated or JSON string
+  seniority    String        // Junior, Mid, Senior, Lead, Principal
+  technologies String        // Comma-separated or JSON list
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  applications Application[]
+}
+
+model AnswerBank {
+  id         String   @id @default(cuid())
+  category   String   // WORK_AUTHORIZATION, SALARY, EXPERIENCE, EDUCATION, GENERAL, DIVERSITY
+  question   String
+  answer     String
+  confidence Float    @default(1.0)
+  verified   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ManualReview {
+  id              String       @id @default(cuid())
+  applicationId   String?
+  application     Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  jobId           String?
+  job             Job?         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  question        String
+  context         String?
+  suggestedAnswer String?
+  status          String       @default("PENDING") // PENDING, RESOLVED, DISMISSED
+  resolvedAnswer  String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}

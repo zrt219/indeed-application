@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Synthetic Job Application Form</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+      width: 100%; padding: 8px; box-sizing: border-box;
+    }
+    button { padding: 10px 20px; background: #0066cc; color: white; border: none; cursor: pointer; }
+    #confirmation { display: none; margin-top: 20px; padding: 15px; background: #e6ffed; border: 1px solid #34d058; }
+  </style>
+</head>
+<body>
+  <h1>Job Application - Senior Software Engineer</h1>
+  <form id="application-form" onsubmit="event.preventDefault(); document.getElementById('confirmation').style.display = 'block';">
+    <div class="form-group">
+      <label for="fullName">Full Name</label>
+      <input type="text" id="fullName" name="fullName" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required>
+    </div>
+
+    <div class="form-group">
+      <label for="experience">Years of Experience with TypeScript</label>
+      <input type="number" id="experience" name="experience" required>
+    </div>
+
+    <div class="form-group">
+      <label for="education">Highest Level of Education</label>
+      <select id="education" name="education" required>
+        <option value="">Select an option</option>
+        <option value="High School">High School</option>
+        <option value="Associate's Degree">Associate's Degree</option>
+        <option value="Bachelor's Degree">Bachelor's Degree</option>
+        <option value="Master's Degree">Master's Degree</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Are you legally authorized to work in the United States?</label>
+      <label><input type="radio" name="workAuth" value="Yes"> Yes</label>
+      <label><input type="radio" name="workAuth" value="No"> No</label>
+    </div>
+
+    <div class="form-group">
+      <label for="resume">Upload Resume</label>
+      <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx">
+    </div>
+
+    <button type="submit" id="submit-btn">Submit Application</button>
+  </form>
+
+  <div id="confirmation">
+    <h2>Application submitted</h2>
+    <p>Thank you for your application! We will review your qualifications shortly.</p>
+  </div>
+</body>
+</html>
