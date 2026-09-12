@@ -6,11 +6,11 @@ describe('Application Workflow Engine & State Machine', () => {
   const workflow = new ApplicationWorkflowEngine();
 
   beforeEach(async () => {
-    // Clean up test jobs from SQLite test db
-    await prisma.eventLedger.deleteMany({});
-    await prisma.manualReview.deleteMany({});
-    await prisma.application.deleteMany({});
-    await prisma.job.deleteMany({});
+    // Clean up test-specific jobs only (never wipe operational pipeline data)
+    await prisma.eventLedger.deleteMany({ where: { job: { url: { contains: 'test' } } } });
+    await prisma.manualReview.deleteMany({ where: { job: { url: { contains: 'test' } } } });
+    await prisma.application.deleteMany({ where: { job: { url: { contains: 'test' } } } });
+    await prisma.job.deleteMany({ where: { url: { contains: 'test' } } });
   });
 
   describe('Duplicate Prevention', () => {

@@ -7,6 +7,7 @@ import { GenericAdapter } from './adapters/generic';
 import { SiteAdapter } from './adapters/adapter.interface';
 import { loadDefaultProfile } from '../qualification/engine';
 import { loadAnswerBank } from '../llm/ollama';
+import { emitLifecycleEvent } from '../sync/outbox';
 
 export type ApplicationState =
   | 'NEW'
@@ -61,16 +62,13 @@ export class ApplicationWorkflowEngine {
     jobId?: string
   ): Promise<void> {
     try {
-      await prisma.eventLedger.create({
-        data: {
-          type,
-          metadata: JSON.stringify(metadata),
-          applicationId,
-          jobId,
-        },
+      await emitLifecycleEvent(type, 'PLAYWRIGHT_AUTONOMOUS', {
+        jobId,
+        applicationId,
+        metadata,
       });
     } catch (e) {
-      console.error('Failed to log event to ledger:', e);
+      console.error('Failed to log event to ledger and outbox:', e);
     }
   }
 

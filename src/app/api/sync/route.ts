@@ -40,33 +40,61 @@ export async function POST(req: Request) {
       });
 
       if (!existing) {
-        // Upsert Job if URL present
+        // Safe Job extraction and foreign-key resolution
+        const jobData = (parsedPayload.data as Record<string, unknown>) || {};
+        const jobUrl = (parsedPayload.url as string) || (jobData.url as string);
+        const jobTitle = (parsedPayload.title as string) || (jobData.title as string) || "Discovered Opportunity";
+        const jobEmployer = (parsedPayload.employer as string) || (jobData.employer as string) || "Unknown Employer";
+        const jobStatus = (parsedPayload.status as string) || (jobData.status as string) || (jobData.to as string) || "DISCOVERED";
+
         let targetJobId = parsedPayload.jobId as string | undefined;
-        if (!targetJobId && parsedPayload.url) {
-          const job = await prisma.job.upsert({
-            where: { url: parsedPayload.url as string },
-            create: {
-              title: (parsedPayload.title as string) || "Discovered Opportunity",
-              employer: (parsedPayload.employer as string) || "Unknown Employer",
-              url: parsedPayload.url as string,
-              source: source || "IMPORT",
-              status: (parsedPayload.status as string) || "DISCOVERED"
-            },
-            update: {
-              status: (parsedPayload.status as string) || undefined
-            }
-          });
-          targetJobId = job.id;
+
+        if (jobUrl) {
+          try {
+            const job = await prisma.job.upsert({
+              where: { url: jobUrl },
+              create: {
+                ...(targetJobId ? { id: targetJobId } : {}),
+                title: jobTitle,
+                employer: jobEmployer,
+                url: jobUrl,
+                source: source || "PLAYWRIGHT_AUTONOMOUS",
+                status: jobStatus
+              },
+              update: {
+                status: jobStatus
+              }
+            });
+            targetJobId = job.id;
+          } catch {
+            // If ID collision or URL constraint, find by URL
+            const fallbackJob = await prisma.job.findUnique({ where: { url: jobUrl } });
+            targetJobId = fallbackJob?.id;
+          }
+        } else if (targetJobId) {
+          const existingJob = await prisma.job.findUnique({ where: { id: targetJobId } });
+          if (!existingJob) {
+            targetJobId = undefined;
+          }
         }
 
-        // Create the event record
+        // Safe Application foreign-key resolution
+        let targetAppId = parsedPayload.applicationId as string | undefined;
+        if (targetAppId) {
+          const existingApp = await prisma.application.findUnique({ where: { id: targetAppId } });
+          if (!existingApp) {
+            targetAppId = undefined;
+          }
+        }
+
+        // Create the event record safely
         await prisma.eventLedger.create({
           data: {
             id: eventId,
             type: eventType,
             source: source,
-            jobId: targetJobId,
-            applicationId: parsedPayload.applicationId as string | undefined,
+            jobId: targetJobId || null,
+            applicationId: targetAppId || null,
             metadata: serializedPayload,
             timestamp: new Date(createdAt || Date.now())
           }

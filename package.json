@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "worker": "tsx src/queue/worker.ts"
+    "worker": "tsx src/queue/worker.ts",
+    "apply:30": "tsx scripts/apply-30.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
