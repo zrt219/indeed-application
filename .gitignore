@@ -50,3 +50,4 @@ screenshots/
 
 # persistent browser profile
 data/browser-profile/
+.browser-profile/

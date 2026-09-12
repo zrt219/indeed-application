@@ -18,7 +18,7 @@ export class BrowserManager {
   constructor(options?: BrowserManagerOptions) {
     this.isHeadless = options?.headless ?? (process.env.HEADLESS !== 'false');
     this.slowMo = options?.slowMo;
-    this.userDataDir = options?.userDataDir || (process.env.INDEED_EMAIL ? path.resolve(process.cwd(), 'data', 'browser-profile') : undefined);
+    this.userDataDir = options?.userDataDir || (process.env.INDEED_EMAIL ? (fs.existsSync(path.resolve(process.cwd(), 'data', 'browser-profile')) ? path.resolve(process.cwd(), 'data', 'browser-profile') : path.resolve(process.cwd(), '.browser-profile')) : undefined);
   }
 
   async launch(): Promise<BrowserContext> {
