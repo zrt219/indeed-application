@@ -22,7 +22,7 @@ export interface DiscoveryOptions {
   useSyntheticFallbackIfBlocked?: boolean;
 }
 
-const CURATED_TECH_JOBS: Omit<DiscoveredJobCard, 'jobKey'>[] = [
+export const CURATED_TECH_JOBS: Omit<DiscoveredJobCard, 'jobKey'>[] = [
   {
     title: 'Senior Full Stack Engineer - TypeScript & React',
     employer: 'CloudScale Infrastructure',
@@ -345,6 +345,9 @@ export class IndeedSearchCrawler {
       console.warn('[IndeedSearch] Live scrape encountered error:', err);
       return [];
     } finally {
+      if (page) {
+        await page.close().catch(() => {});
+      }
       if (!this.browserManager && bm) {
         await bm.close();
       }
@@ -366,7 +369,7 @@ export class IndeedSearchCrawler {
 
     console.log(`[IndeedSearch] Starting discovery for ${targetCount} positions...`);
 
-    let discoveredCards: DiscoveredJobCard[] = [];
+    const discoveredCards: DiscoveredJobCard[] = [];
 
     // 1. Try live scrape first if queries provided
     const queries = options?.queries || ['Full Stack Engineer', 'Software Engineer', 'TypeScript'];
